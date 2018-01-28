@@ -1,0 +1,5 @@
+FROM gocd/gocd-server:v18.1.0
+
+RUN apk --no-cache add libxml2-utils
+
+EXPOSE 8153 8154
