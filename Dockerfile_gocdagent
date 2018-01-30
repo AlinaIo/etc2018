@@ -1,0 +1,6 @@
+FROM gocd/gocd-agent-ubuntu-16.04:v18.1.0
+
+RUN apt-get update && \
+	apt-get install -y nodejs && \
+	apt-get install -y npm && \
+	npm install -g -s --no-progress yarn
