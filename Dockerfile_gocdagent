@@ -1,6 +1,14 @@
 FROM gocd/gocd-agent-ubuntu-16.04:v18.1.0
 
+ARG DOCKER_GROUP_ID
+
+RUN groupadd -g $DOCKER_GROUP_ID docker && gpasswd -a go docker
+
 RUN apt-get update && \
+	curl -sSL http://get.docker.com | sh && \
+	usermod -aG docker go && \
+	curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
 	apt-get install -y nodejs && \
-	apt-get install -y npm && \
-	npm install -g -s --no-progress yarn
+	apt-get install -y build-essential && \
+	npm install -g -s --no-progress yarn && \
+	echo go ALL=NOPASSWD: /usr/bin/docker >> /etc/sudoers
