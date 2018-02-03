@@ -2,13 +2,36 @@ FROM gocd/gocd-agent-ubuntu-16.04:v18.1.0
 
 ARG DOCKER_GROUP_ID
 
-RUN groupadd -g $DOCKER_GROUP_ID docker && gpasswd -a go docker
+#Create docker group with the same ID as on the host
+RUN groupadd -g $DOCKER_GROUP_ID docker \
+&&	gpasswd -a go docker
 
-RUN apt-get update && \
-	curl -sSL http://get.docker.com | sh && \
-	usermod -aG docker go && \
-	curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
-	apt-get install -y nodejs && \
-	apt-get install -y build-essential && \
-	npm install -g -s --no-progress yarn && \
-	echo go ALL=NOPASSWD: /usr/bin/docker >> /etc/sudoers
+#Update packages
+RUN apt-get update \
+
+#Install docker
+&&	export LC_ALL=C \
+&&	curl -sSL http://get.docker.com | sh \
+&&	usermod -aG docker go \
+
+#Install node
+&&	curl -sL https://deb.nodesource.com/setup_8.x | bash - \
+&&	apt-get install -y nodejs \
+&&	apt-get install -y build-essential \
+
+#Install yarn
+&&	npm install -g -s --no-progress yarn \
+
+#Install kubectl
+&&	curl -LO https://storage.googleapis.com/kubernetes-release/release/1.9.2/bin/linux/amd64/kubectl \ 
+&&	chmod +x ./kubectl \
+&&	mv ./kubectl /usr/local/bin/kubectl \
+
+#Install kops
+&&	curl -LO https://github.com/kubernetes/kops/releases/download/1.8.0/kops-linux-amd64 \
+&&	chmod +x kops-linux-amd64 \
+&&	mv kops-linux-amd64 /usr/local/bin/kops \
+
+#Install aws cli
+&&	apt-get install -y python-pip \
+&&	pip install awscli \
