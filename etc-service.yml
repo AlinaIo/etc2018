@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: etc-service
+spec:
+  ports:
+  - port: 80
+    targetPort: nodejs-port
+    protocol: TCP
+  selector:
+    app: etc
+  type: LoadBalancer
+
