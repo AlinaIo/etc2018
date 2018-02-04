@@ -1,0 +1,100 @@
+{
+  "kind": "Namespace",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "team1",
+    "labels": {
+      "name": "team1"
+    }
+  }
+}
+{
+  "kind": "Namespace",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "team2",
+    "labels": {
+      "name": "team2"
+    }
+  }
+}
+{
+  "kind": "Namespace",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "team3",
+    "labels": {
+      "name": "team3"
+    }
+  }
+}
+{
+  "kind": "Namespace",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "team4",
+    "labels": {
+      "name": "team4"
+    }
+  }
+}
+{
+  "kind": "Namespace",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "team5",
+    "labels": {
+      "name": "team5"
+    }
+  }
+}
+{
+  "kind": "Namespace",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "team6",
+    "labels": {
+      "name": "team6"
+    }
+  }
+}
+{
+  "kind": "Namespace",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "team7",
+    "labels": {
+      "name": "team7"
+    }
+  }
+}
+{
+  "kind": "Namespace",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "team8",
+    "labels": {
+      "name": "team8"
+    }
+  }
+}
+{
+  "kind": "Namespace",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "team9",
+    "labels": {
+      "name": "team9"
+    }
+  }
+}
+{
+  "kind": "Namespace",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "team10",
+    "labels": {
+      "name": "team10"
+    }
+  }
+}
