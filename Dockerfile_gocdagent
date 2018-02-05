@@ -23,7 +23,7 @@ RUN apt-get update \
 &&	npm install -g -s --no-progress yarn \
 
 #Install kubectl
-&&	curl -LO https://storage.googleapis.com/kubernetes-release/release/1.9.2/bin/linux/amd64/kubectl \ 
+&&	curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.9.2/bin/linux/amd64/kubectl \ 
 &&	chmod +x ./kubectl \
 &&	mv ./kubectl /usr/local/bin/kubectl \
 
@@ -34,4 +34,4 @@ RUN apt-get update \
 
 #Install aws cli
 &&	apt-get install -y python-pip \
-&&	pip install awscli \
+&&	pip install awscli
