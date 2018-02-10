@@ -8,7 +8,7 @@
         "Type": "A",
 	"AliasTarget": {
 	  "HostedZoneId": "ZHURV8PSTC4K8",
-	  "DNSName": "a5477b8620b7c11e8826a0603f793641-1199238953.eu-west-2.elb.amazonaws.com",
+	  "DNSName": "alias_goes_here",
 	  "EvaluateTargetHealth": false
 	}
       }
