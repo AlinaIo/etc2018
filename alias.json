@@ -4,7 +4,7 @@
     {
       "Action": "CREATE",
       "ResourceRecordSet": {
-        "Name": "team1.kube.etcw.tk.",
+        "Name": "team10.kube.etcw.tk.",
         "Type": "A",
 	"AliasTarget": {
 	  "HostedZoneId": "ZHURV8PSTC4K8",
