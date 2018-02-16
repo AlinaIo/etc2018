@@ -1,3 +1,5 @@
+//credits to Andrew Mead: https://www.udemy.com/react-2nd-edition/learn/v4/overview
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
