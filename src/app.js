@@ -16,7 +16,6 @@ const store = configureStore();
 
 const state = store.getState();
 const visibleExpenses = getVisibleExpenses(state.expenses, state.filters);
-console.log('this is v2');
 
 const jsx = (
   <Provider store={store}>
