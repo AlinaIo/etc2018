@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - name: etc2018
-        image: alinaio/etc2018:2
+        image: alinaio/etc2018:1
         ports:
         - name: nodejs-port
           containerPort: 8080
