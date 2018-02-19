@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cruise xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="cruise-config.xsd" schemaVersion="104">
+  <server artifactsdir="artifacts" agentAutoRegisterKey="ac417561-91ea-4deb-bde7-e8537828032d" webhookSecret="83a0b09c-bbcb-4e9b-b1fb-e8e24cacd556" commandRepositoryLocation="default" serverId="" tokenGenerationKey="2b671aa8-2946-41a9-bf99-568ec08462a1" />
+  <pipelines group="defaultGroup">
+    <pipeline name="etc2018">
+      <environmentvariables>
+        <variable name="DOCKER_HUB_USERNAME">
+          <value>alinaio</value>
+        </variable>
+        <variable name="VERSION">
+          <value>1</value>
+        </variable>
+        <variable name="DOCKER_HUB_PASSWORD" secure="true">
+          <encryptedValue>2S//vpIWO+IOEgSnjWDfnw==</encryptedValue>
+        </variable>
+      </environmentvariables>
+      <materials>
+        <git url="https://github.com/AlinaIo/etc2018.git" />
+      </materials>
+      <stage name="buildStage">
+        <jobs>
+          <job name="buildJob">
+            <tasks>
+              <exec command="yarn">
+                <arg>install</arg>
+                <arg>--no-cache</arg>
+                <runif status="passed" />
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+      <stage name="testStage">
+        <jobs>
+          <job name="testJob">
+            <tasks>
+              <exec command="yarn">
+                <arg>test</arg>
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+      <stage name="buildDockerImageStage">
+        <jobs>
+          <job name="buildDockerImageJob">
+            <tasks>
+              <exec command="sh">
+                <arg>-c</arg>
+                <arg>docker build -t $DOCKER_HUB_USERNAME/etc2018:$VERSION -f Dockerfile .</arg>
+                <runif status="passed" />
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+      <stage name="dockerLoginStage">
+        <jobs>
+          <job name="dockerLoginJob">
+            <tasks>
+              <exec command="sh">
+                <arg>-c</arg>
+                <arg>docker login --username $DOCKER_HUB_USERNAME --password $DOCKER_HUB_PASSWORD</arg>
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+      <stage name="pushDockerImageStage">
+        <jobs>
+          <job name="pushDockerImageJob">
+            <tasks>
+              <exec command="sh">
+                <arg>-c</arg>
+                <arg>docker push $DOCKER_HUB_USERNAME/etc2018:$VERSION</arg>
+                <runif status="passed" />
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+    </pipeline>
+    <pipeline name="etc2018_initial_deploy">
+      <environmentvariables>
+        <variable name="CONTEXT">
+          <value>team10</value>
+        </variable>
+        <variable name="KUBE_CLUSTER">
+          <value>kube.etcw.tk</value>
+        </variable>
+        <variable name="KUBE_USER">
+          <value>kube.etcw.tk</value>
+        </variable>
+        <variable name="KOPS_STATE_STORE">
+          <value>s3://workshop-2018</value>
+        </variable>
+        <variable name="AWS_ACCESS_KEY_ID" secure="true">
+          <encryptedValue>xikmFkE8xWwAr7U4xNh0R7phnBxL/iLV</encryptedValue>
+        </variable>
+        <variable name="AWS_SECRET_ACCESS_KEY" secure="true">
+          <encryptedValue>A642X7/pvjWGdhfsXVV0CLiffz7q6QWajZiQyxJ/6iBvyBaHPDqTGL8b2KupRhTn</encryptedValue>
+        </variable>
+      </environmentvariables>
+      <materials>
+        <git url="https://github.com/AlinaIo/etc2018.git" />
+      </materials>
+      <stage name="awsConfigureStage">
+        <approval type="manual" />
+        <jobs>
+          <job name="awsConfigureJob">
+            <tasks>
+              <exec command="/bin/bash">
+                <arg>-c</arg>
+                <arg>aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID &amp;&amp; aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY</arg>
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+      <stage name="createSshStage">
+        <jobs>
+          <job name="createSshJob">
+            <tasks>
+              <exec command="mkdir">
+                <arg>.ssh</arg>
+              </exec>
+              <exec command="ssh-keygen">
+                <arg>-f</arg>
+                <arg>.ssh/id_rsa</arg>
+                <runif status="passed" />
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+      <stage name="kubeConfigStage">
+        <jobs>
+          <job name="kubeConfigJob">
+            <tasks>
+              <exec command="sh">
+                <arg>-c</arg>
+                <arg>kops export kubecfg $KUBE_CLUSTER</arg>
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+      <stage name="setContextStage">
+        <jobs>
+          <job name="setContextJob">
+            <tasks>
+              <exec command="sh">
+                <arg>-c</arg>
+                <arg>kubectl config set-context $CONTEXT --namespace=$CONTEXT --cluster=$KUBE_CLUSTER --user=$KUBE_USER</arg>
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+      <stage name="useContextStage">
+        <jobs>
+          <job name="useContextJob">
+            <tasks>
+              <exec command="sh">
+                <arg>-c</arg>
+                <arg>kubectl config use-context $CONTEXT</arg>
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+      <stage name="deployAppStage">
+        <jobs>
+          <job name="deployAppJob">
+            <tasks>
+              <exec command="kubectl">
+                <arg>apply</arg>
+                <arg>-f</arg>
+                <arg>etc.yml</arg>
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+      <stage name="createServiceStage">
+        <jobs>
+          <job name="createServiceJob">
+            <tasks>
+              <exec command="kubectl">
+                <arg>create</arg>
+                <arg>-f</arg>
+                <arg>etc-service.yml</arg>
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+      <stage name="createAliasStage">
+        <jobs>
+          <job name="createAliasJob">
+            <tasks>
+              <exec command="sh">
+                <arg>-c</arg>
+                <arg>sed -i "s/alias_goes_here/$(kubectl describe svc etc-service | grep -o -P '(?&lt;=Ingress:).*(?=)' | sed -e 's/^[ \t]*//')/g" alias.json</arg>
+              </exec>
+              <exec command="sh">
+                <arg>-c</arg>
+                <arg>sed -i "s/context_goes_here/$CONTEXT/g" alias.json</arg>
+                <runif status="passed" />
+              </exec>
+              <exec command="sh">
+                <arg>-c</arg>
+                <arg>aws route53 change-resource-record-sets --hosted-zone-id $(aws route53 list-hosted-zones | grep -o -P '(?&lt;=/hostedzone/).*(?=",)') --change-batch file://alias.json</arg>
+                <runif status="passed" />
+              </exec>
+              <exec command="sh">
+                <arg>-c</arg>
+                <arg>sed -i "s/$(kubectl describe svc etc-service | grep -o -P '(?&lt;=Ingress:).*(?=)' | sed -e 's/^[ \t]*//')/alias_goes_here/g" alias.json</arg>
+                <runif status="passed" />
+              </exec>
+              <exec command="sh">
+                <arg>-c</arg>
+                <arg>sed -i "s/$CONTEXT/context_goes_here/g" alias.json</arg>
+                <runif status="passed" />
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+    </pipeline>
+    <pipeline name="deploy">
+      <materials>
+        <git url="https://github.com/AlinaIo/etc2018.git" />
+      </materials>
+      <stage name="deployStage">
+        <approval type="manual" />
+        <jobs>
+          <job name="deployJob">
+            <tasks>
+              <exec command="kubectl">
+                <arg>apply</arg>
+                <arg>-f</arg>
+                <arg>etc.yml</arg>
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+    </pipeline>
+    <pipeline name="rollback">
+      <materials>
+        <pipeline pipelineName="deploy" stageName="deployStage" />
+      </materials>
+      <stage name="rollbackStage">
+        <approval type="manual" />
+        <jobs>
+          <job name="rollbackJob">
+            <tasks>
+              <exec command="kubectl">
+                <arg>rollout</arg>
+                <arg>undo</arg>
+                <arg>deploy</arg>
+                <arg>etc-deployment</arg>
+                <arg>--to-revision=1</arg>
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+    </pipeline>
+  </pipelines>
+  <agents>
+    <agent hostname="gocdagent01" ipaddress="172.17.0.3" uuid="34242a91-4590-4456-bf9f-903cc02ff720" />
+  </agents>
+</cruise>
