@@ -7,9 +7,6 @@
         <variable name="VERSION">
           <value>1</value>
         </variable>
-        <variable name="DOCKER_HUB_PASSWORD" secure="true">
-          <encryptedValue>2S//vpIWO+IOEgSnjWDfnw==</encryptedValue>
-        </variable>
       </environmentvariables>
       <materials>
         <git url="https://github.com/AlinaIo/etc2018.git" />
