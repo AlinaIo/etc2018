@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <cruise xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="cruise-config.xsd" schemaVersion="104">
-  <server artifactsdir="artifacts" agentAutoRegisterKey="ac417561-91ea-4deb-bde7-e8537828032d" webhookSecret="83a0b09c-bbcb-4e9b-b1fb-e8e24cacd556" commandRepositoryLocation="default" serverId="" tokenGenerationKey="2b671aa8-2946-41a9-bf99-568ec08462a1" />
+  <server artifactsdir="artifacts" agentAutoRegisterKey="ac417561-91ea-4deb-bde7-e8537828032d" webhookSecret="83a0b09c-bbcb-4e9b-b1fb-e8e24cacd556" commandRepositoryLocation="default" serverId="3822338f-06ae-413d-8fa9-76d61827cc17" tokenGenerationKey="2b671aa8-2946-41a9-bf99-568ec08462a1" />
   <pipelines group="defaultGroup">
     <pipeline name="etc2018_initial_deploy">
       <environmentvariables>
@@ -191,7 +191,4 @@
       </stage>
     </pipeline>
   </pipelines>
-  <agents>
-    <agent hostname="gocdagent01" ipaddress="172.17.0.3" uuid="34242a91-4590-4456-bf9f-903cc02ff720" />
-  </agents>
 </cruise>
