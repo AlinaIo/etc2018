@@ -1,7 +1,82 @@
-<?xml version="1.0" encoding="utf-8"?>
-<cruise xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="cruise-config.xsd" schemaVersion="104">
-  <server artifactsdir="artifacts" agentAutoRegisterKey="ac417561-91ea-4deb-bde7-e8537828032d" webhookSecret="83a0b09c-bbcb-4e9b-b1fb-e8e24cacd556" commandRepositoryLocation="default" serverId="3822338f-06ae-413d-8fa9-76d61827cc17" tokenGenerationKey="2b671aa8-2946-41a9-bf99-568ec08462a1" />
   <pipelines group="defaultGroup">
+    <pipeline name="etc2018">
+      <environmentvariables>
+        <variable name="DOCKER_HUB_USERNAME">
+          <value>alinaio</value>
+        </variable>
+        <variable name="VERSION">
+          <value>1</value>
+        </variable>
+        <variable name="DOCKER_HUB_PASSWORD" secure="true">
+          <encryptedValue>2S//vpIWO+IOEgSnjWDfnw==</encryptedValue>
+        </variable>
+      </environmentvariables>
+      <materials>
+        <git url="https://github.com/AlinaIo/etc2018.git" />
+      </materials>
+      <stage name="buildStage">
+        <jobs>
+          <job name="buildJob">
+            <tasks>
+              <exec command="yarn">
+                <arg>install</arg>
+                <arg>--no-cache</arg>
+                <runif status="passed" />
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+      <stage name="testStage">
+        <jobs>
+          <job name="testJob">
+            <tasks>
+              <exec command="yarn">
+                <arg>test</arg>
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+      <stage name="buildDockerImageStage">
+        <jobs>
+          <job name="buildDockerImageJob">
+            <tasks>
+              <exec command="sh">
+                <arg>-c</arg>
+                <arg>docker build -t $DOCKER_HUB_USERNAME/etc2018:$VERSION -f Dockerfile .</arg>
+                <runif status="passed" />
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+      <stage name="dockerLoginStage">
+        <jobs>
+          <job name="dockerLoginJob">
+            <tasks>
+              <exec command="sh">
+                <arg>-c</arg>
+                <arg>docker login --username $DOCKER_HUB_USERNAME --password $DOCKER_HUB_PASSWORD</arg>
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+      <stage name="pushDockerImageStage">
+        <jobs>
+          <job name="pushDockerImageJob">
+            <tasks>
+              <exec command="sh">
+                <arg>-c</arg>
+                <arg>docker push $DOCKER_HUB_USERNAME/etc2018:$VERSION</arg>
+                <runif status="passed" />
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+    </pipeline>
     <pipeline name="etc2018_initial_deploy">
       <environmentvariables>
         <variable name="CONTEXT">
@@ -15,12 +90,6 @@
         </variable>
         <variable name="KOPS_STATE_STORE">
           <value>s3://workshop-2018</value>
-        </variable>
-        <variable name="AWS_ACCESS_KEY_ID" secure="true">
-          <encryptedValue>xikmFkE8xWwAr7U4xNh0R7phnBxL/iLV</encryptedValue>
-        </variable>
-        <variable name="AWS_SECRET_ACCESS_KEY" secure="true">
-          <encryptedValue>A642X7/pvjWGdhfsXVV0CLiffz7q6QWajZiQyxJ/6iBvyBaHPDqTGL8b2KupRhTn</encryptedValue>
         </variable>
       </environmentvariables>
       <materials>
@@ -191,4 +260,3 @@
       </stage>
     </pipeline>
   </pipelines>
-</cruise>
